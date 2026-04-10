@@ -1,30 +1,52 @@
+use std::io; //импортируем import output
+
+const C: f32 = 32.0;
+
+fn c_to_f(celsius_temp:f32) -> f32
+{
+    (celsius_temp*(9.0/5.0))+C//возврат без ;
+}
+
+fn f_to_c(fahrenheit_temp: f32) -> f32 {
+    (fahrenheit_temp - C) *(5.0/9.0)
+}
+
+//Option говорит о том, что ф-ия может вернуть f32, но может и не вернуть
+fn convert(temperature: f32,choice: u8) -> Option<f32>
+{
+    match choice
+    {
+        1 =>Some(c_to_f(temperature )),
+        2 =>Some(f_to_c(temperature )),
+        _ =>None,
+    }
+}
+
 fn main() 
 {
-    let mut a=42;//mut для изменяемой переменной
-    println!("Hello, world! The value: {a}");
+    println!("Temperature converter. \n (1) C to F \n (2) F to C");
+    let mut user_choice=String::new();
+    //ввод строки
+    io::stdin().read_line(&mut user_choice).unwrap();
 
-    // SCALAR (типы)
-    // Integer
-    let b:u8;//i8;  //в u8 8 это 2^8 размер
-    // u - unsigned (не имеет отрицательных чисел)
-    // i - signed 
-    let c:i128; 
-    //let d:isize;//arch (зависит от архитектуры процессора)
-    let hex=0xab;//16-ти ричное
-    //0o - octal (8-ми ричное)
-    //0b -binary (двоичное)
+    let n_choice=user_choice
+        .trim()//убирает лишние пробелы
+        .parse::<u8>()
+        .expect("Please type a number");//проверяет на пракильность
 
-    //float
-    // f32
-    // f64
+    println!("Enter a temperature");
+    let mut  temperature =String::new();
 
-    //bool
-    //char
+    io::stdin().read_line(&mut temperature).unwrap();
 
+    let temperature =temperature
+        .trim()//убирает лишние пробелы
+        .parse::<f32>()
+        .expect("Please type a number");//проверяет на пракильность
 
-    //COMPOUND (составной тип-храним вместе)
-    // Tuple -картеж
-    let myTuple: (i8,char,bool)=(42,'f',false);
-    //Array
-    let arr=[1,2,3];
+    match convert(temperature, n_choice)
+    {
+        Some(result)=>println!("The result of conversion is: {result}"),
+        None =>println!("Unknown conversion requested!"),
+    };
 }

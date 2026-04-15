@@ -1,52 +1,74 @@
-use std::io; //импортируем import output
+//проверка стиля кода
+//#![warn(clippy::all, clippy::pedantic)]
+//потом в консоли можно написать cargo flippy
 
-const C: f32 = 32.0;
+//бинарный поиск
+//работает только со сортированными массивами!!!!
 
-fn c_to_f(celsius_temp:f32) -> f32
+//для строк 41-47 подключить модуль
+//use std::cmp::Ordering;
+
+fn main()
 {
-    (celsius_temp*(9.0/5.0))+C//возврат без ;
-}
+    let arr:[i32;10]=[-1,3,5,7,8,10,24,37,42,135];
 
-fn f_to_c(fahrenheit_temp: f32) -> f32 {
-    (fahrenheit_temp - C) *(5.0/9.0)
-}
+    let result = bin_search(&arr, 23);
 
-//Option говорит о том, что ф-ия может вернуть f32, но может и не вернуть
-fn convert(temperature: f32,choice: u8) -> Option<f32>
-{
-    match choice
+    match result
     {
-        1 =>Some(c_to_f(temperature )),
-        2 =>Some(f_to_c(temperature )),
-        _ =>None,
+        Some((found_value,found_index))=>println!("found value {found_value} at {found_index}"),
+        None=>println!("Not found")
+    }
+
+        
+}
+
+//&-это заимствование
+fn bin_search(arr: &[i32], desired_value: i32)->Option <(i32,usize)>
+{
+    let mut low_bound: usize=0;
+    let up_bound: usize=arr.len()-1;
+    let mut i: usize=0;
+
+    while low_bound <= up_bound{
+        i+=1;
+        let mid:usize=(up_bound+low_bound)/2;
+
+        let mid_value:i32=arr[mid];
+        if mid_value ==desired_value{
+            return Some((mid_value,mid));
+        } else if desired_value>mid_value{
+            low_bound=mid+1;
+        }
+        //альтернатива
+        /*
+        match mid_value.cmp(&desired_value)
+        {
+            Ordering::Equal => return Some((mid_value,mid)),
+            Ordering::Greater => up_bound= mid - 1,
+            Ordering::Less => low_bound = mid + 1,
+        }
+        */
+        println!("Step {i}");
+    }
+
+    None
+}
+
+
+
+#[cfg(test)]
+//модуль 
+mod tests
+{
+    use super::*;
+
+    const ARR:[i32;10]=[-1,3,5,7,8,10,24,37,42,135];
+
+    #[test]
+    fn element_found()
+    {
+        assert_eq!((-1,0),bin_search(&ARR,-1).unwrap());
     }
 }
 
-fn main() 
-{
-    println!("Temperature converter. \n (1) C to F \n (2) F to C");
-    let mut user_choice=String::new();
-    //ввод строки
-    io::stdin().read_line(&mut user_choice).unwrap();
-
-    let n_choice=user_choice
-        .trim()//убирает лишние пробелы
-        .parse::<u8>()
-        .expect("Please type a number");//проверяет на пракильность
-
-    println!("Enter a temperature");
-    let mut  temperature =String::new();
-
-    io::stdin().read_line(&mut temperature).unwrap();
-
-    let temperature =temperature
-        .trim()//убирает лишние пробелы
-        .parse::<f32>()
-        .expect("Please type a number");//проверяет на пракильность
-
-    match convert(temperature, n_choice)
-    {
-        Some(result)=>println!("The result of conversion is: {result}"),
-        None =>println!("Unknown conversion requested!"),
-    };
-}

@@ -1,0 +1,6 @@
+const TARGET_DIR: &str="screens";
+
+fn main()
+{
+    let args: Vec<String>=env::args().collect();
+}
